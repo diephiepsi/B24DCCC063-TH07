@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ProTable from '@ant-design/pro-table';
 import { Button, message, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
