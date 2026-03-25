@@ -1,31 +1,47 @@
 export interface HistoryLog {
-  admin: string;
-  time: string;
-  action: 'Approved' | 'Rejected';
-  reason?: string;
+	admin: string;
+	time: string;
+	action: 'Approved' | 'Rejected';
+	reason?: string;
 }
 
 export interface Club {
-  id: string;
-  avatar: string;
-  name: string;
-  foundedDate: string;
-  description: string; // Nội dung HTML
-  leader: string;
-  isActive: boolean;
+	id: string;
+	avatar: string;
+	name: string;
+	foundedDate: string;
+	description: string; // Nội dung HTML
+	leader: string;
+	isActive: boolean;
+}
+export type Status = 'Pending' | 'Approved' | 'Rejected';
+
+export interface Log {
+	admin: string;
+	action: Status;
+	date: string;
+	note?: string;
 }
 
-export interface Application {
-  id: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  gender: 'Nam' | 'Nu';
-  address: string;
-  strength: string;
-  clubId: string;
-  reason: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  note?: string;
-  history?: HistoryLog[];
+export interface MemberRecord {
+	id: string;
+	name: string;
+	email: string;
+	phone: string;
+	gender?: string;
+	address?: string;
+	skill?: string;
+	reason?: string;
+	clubId: string;
+	clubName: string;
+	status: Status;
+	history: Log[];
+}
+
+interface Props {
+	data: MemberRecord[];
+	clubs: { id: string; name: string }[];
+	onChange: (d: MemberRecord[]) => void;
+	role: 'admin' | 'user';
+	setRole: (r: 'admin' | 'user') => void;
 }
