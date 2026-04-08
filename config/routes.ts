@@ -131,5 +131,11 @@
 		icon: 'TeamOutlined',
 		component: './TH06/index',
 	},
-	
+		{
+		path: '/thuc-hanh-07',
+		name: 'Bài thực hành 07',
+		icon: 'TeamOutlined',
+		component: './TH07/index',
+	},
+
 ];
