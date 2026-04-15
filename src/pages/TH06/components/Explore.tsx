@@ -65,12 +65,10 @@ const Explore = (props: any) => {
 
   return (
     <div style={{ padding: '16px 0' }}>
-      {/* Tiêu đề theo yêu cầu */}
       <Title level={2} style={{ marginBottom: 24 }}>
        Trang chủ - Khám phá điểm đến
       </Title>
 
-      {/* Bộ lọc */}
       <Space style={{ marginBottom: 24, flexWrap: 'wrap' }} size="middle">
         <Select
           value={filterType}

@@ -18,7 +18,7 @@ export default (props: any) => {
     <ProTable
       rowKey="id"
       search={{ defaultCollapsed: false }}
-      params={{ tasks }} // Kích hoạt render lại khi tasks đổi
+      params={{ tasks }} 
       request={async (params: any) => {
         let data = [...tasks];
         if (params.title) data = data.filter(i => i.title.toLowerCase().includes(params.title.toLowerCase()));

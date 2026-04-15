@@ -6,11 +6,9 @@ const { Title, Text } = Typography;
 const Login = ({ allUsers, setAllUsers, setCurrentUser }: any) => {
   const onFinish = (values: any) => {
     const { username, password } = values;
-    // Tìm kiếm xem user đã tồn tại trong hệ thống (allUsers) chưa
     const user = allUsers.find((u: any) => u.username === username);
 
     if (user) {
-      // Nếu user đã tồn tại -> Kiểm tra mật khẩu
       if (user.password === password) {
         setCurrentUser(username);
         message.success(`Chào mừng ${username} trở lại!`);
@@ -18,7 +16,6 @@ const Login = ({ allUsers, setAllUsers, setCurrentUser }: any) => {
         message.error('Mật khẩu không chính xác. Vui lòng thử lại!');
       }
     } else {
-      // Nếu user chưa tồn tại -> Tự động "đăng ký" và đăng nhập
       setAllUsers([...allUsers, { username, password }]);
       setCurrentUser(username);
       message.success('Tài khoản mới đã được tạo và đăng nhập thành công!');
@@ -32,7 +29,6 @@ const Login = ({ allUsers, setAllUsers, setCurrentUser }: any) => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        // Nền Gradient xanh dương - tím hiện đại, nhẹ nhàng
         background: 'linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)',
         padding: 20,
       }}
@@ -41,7 +37,6 @@ const Login = ({ allUsers, setAllUsers, setCurrentUser }: any) => {
         style={{
           width: 400,
           borderRadius: 16,
-          // Hiệu ứng Glassmorphism: đổ bóng mờ và bo góc mạnh
           boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
           background: 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(4px)',
@@ -50,7 +45,6 @@ const Login = ({ allUsers, setAllUsers, setCurrentUser }: any) => {
         bordered={false}
       >
         <div style={{ textAlign: 'center', marginBottom: 30 }}>
-          {/* Icon bảo mật lớn phía trên tiêu đề */}
           <SecurityScanOutlined style={{ fontSize: 50, color: '#1890ff', marginBottom: 15 }} />
           <Title level={2} style={{ margin: 0, color: '#262626' }}>
             QUẢN LÝ CÔNG VIỆC
@@ -64,7 +58,7 @@ const Login = ({ allUsers, setAllUsers, setCurrentUser }: any) => {
           initialValues={{ remember: true }}
           onFinish={onFinish}
           layout="vertical"
-          size="large" // Làm cho các ô input và nút bấm lớn hơn, dễ thao tác
+          size="large" 
         >
           <Form.Item
             name="username"
@@ -99,7 +93,6 @@ const Login = ({ allUsers, setAllUsers, setCurrentUser }: any) => {
                 height: 45,
                 fontSize: 16,
                 fontWeight: 'bold',
-                // Hiệu ứng shadow cho nút bấm
                 boxShadow: '0 4px 14px 0 rgba(24, 144, 255, 0.3)',
               }}
             >
