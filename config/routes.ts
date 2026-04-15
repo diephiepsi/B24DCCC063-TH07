@@ -138,8 +138,8 @@
 		component: './TH07/index',
 	},
 	{
-		path: '/ProfileResponsive',
-		name: 'Profile Responsive',
+		path: '/ProfileResponsive(diep)',
+		name: 'Responsive',
 		icon: 'TeamOutlined',
 		component: './ProfileResponsive/index',
 	},
