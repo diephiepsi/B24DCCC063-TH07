@@ -1,4 +1,6 @@
-﻿export default [
+﻿import component from '@/locales/en-US/component';
+
+export default [
 	{
 		path: '/user',
 		layout: false,
@@ -129,11 +131,19 @@
 		icon: 'TeamOutlined',
 		component: './TH06/index',
 	},
+
 	{
 		path: '/thuc-hanh-07',
 		name: 'Bài thực hành 07',
 		icon: 'TeamOutlined',
 		component: './TH07/index',
+	},
+
+	{
+		path: '/profile',
+		name: 'ProfileCard',
+		icon: 'UserOutlined',
+		component: './TH/ProfileCard',
 	},
 	{
 		path: '/ProfileResponsive(diep)',
