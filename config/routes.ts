@@ -129,7 +129,6 @@
 		icon: 'TeamOutlined',
 		component: './TH06/index',
 	},
-<<<<<<< HEAD
 	{
 		path: '/thuc-hanh-07',
 		name: 'Bài thực hành 07',
@@ -142,19 +141,7 @@
 		icon: 'TeamOutlined',
 		component: './ProfileResponsive/index',
 	},
-=======
->>>>>>> 6e12141f8dd5a330035eb98eacee38e45039a41a
 
-	{
-		path: '/thuc-hanh-07', // Sửa lại đường dẫn cha cho đồng bộ
-		name: 'ProfileCard',
-		icon: 'UserOutlined',
-		routes: [
-			{
-				path: '/thuc-hanh-07/profile-card', // Con phải nằm trong cha
-				name: 'Profile Card Responsive',
-				component: './TH/ProfileCard',
-			},
-		],
-	},
+
+	
 ];
