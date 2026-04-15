@@ -129,6 +129,7 @@
 		icon: 'TeamOutlined',
 		component: './TH06/index',
 	},
+<<<<<<< HEAD
 
 	{
 		path: '/thuc-hanh-07', // Sửa lại đường dẫn cha cho đồng bộ
@@ -142,4 +143,13 @@
 			},
 		],
 	},
+=======
+		{
+		path: '/thuc-hanh-07',
+		name: 'Bài thực hành 07',
+		icon: 'TeamOutlined',
+		component: './TH07/index',
+	},
+
+>>>>>>> 6982fe6e3fa53925a9fedfb86d9253d5c0c351dc
 ];

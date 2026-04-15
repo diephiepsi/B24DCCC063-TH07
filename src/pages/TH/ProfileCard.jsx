@@ -2,14 +2,11 @@ import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 import './type.css';
 
-// Yêu cầu 1: Component nhận name, image, description
 const ProfileCard = ({ name, image, description }) => {
-	// Yêu cầu 3: Hook kiểm tra kích thước màn hình
 	const isMobile = useMediaQuery({ maxWidth: 768 });
 
 	return (
 		<div className='card-container'>
-			{/* Yêu cầu 2: Layout linh hoạt ngang/dọc qua CSS */}
 			<div className='profile-card'>
 				<div className='card-image'>
 					<img src={image} alt={name} />
@@ -20,18 +17,17 @@ const ProfileCard = ({ name, image, description }) => {
 					<p>{description}</p>
 
 					<div className='extra-content'>
-						{/* Yêu cầu 3: Nội dung khác nhau cho Mobile & Desktop */}
 						{isMobile ? (
 							<div className='mobile-only'>
-								<button className='btn-call'>📞 Gọi ngay</button>
+								<button className='btn-call'> Gọi ngay</button>
 								<p>
 									<small>Giao diện dành cho điện thoại</small>
 								</p>
 							</div>
 						) : (
 							<div className='desktop-only'>
-								<button className='btn-email'>✉️ Gửi Email</button>
-								<button className='btn-web'>🌐 Ghé thăm Website</button>
+								<button className='btn-email'> Gửi Email</button>
+								<button className='btn-web'> Ghé thăm Website</button>
 								<p>
 									<small>Giao diện dành cho máy tính</small>
 								</p>
