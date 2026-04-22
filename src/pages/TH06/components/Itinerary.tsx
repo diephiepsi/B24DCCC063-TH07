@@ -21,55 +21,44 @@ import {
 import {
 	PlusOutlined,
 	DeleteOutlined,
-	WalletOutlined,
-	ClockCircleOutlined,
 	ArrowUpOutlined,
 	ArrowDownOutlined,
 	CalendarOutlined,
 	EnvironmentOutlined,
 	RocketOutlined,
 } from '@ant-design/icons';
-import moment, { Moment } from 'moment';
-import 'moment/locale/vi';
+import moment from 'moment';
 
-moment.locale('vi');
+interface Destination {
+	id: string;
+	name: string;
+	location: string;
+	type: string;
+	price: number;
+	duration: number;
+	rating: number;
+	image: string;
+	budget?: { food: number; transport: number; accommodation: number };
+}
 
-import { Destination, PlanDay } from './util';
+interface PlanDay {
+	day: number;
+	date: string;
+	items: Destination[];
+}
 
-const { Title, Text } = Typography;
-const { Option } = Select;
+interface PlannerProps {
+	destinations: Destination[]; // Dữ liệu từ Admin truyền xuống
+}
 
-const Planner: React.FC = () => {
-	const [destinations] = useState<Destination[]>([
-		{
-			id: '1',
-			name: 'Vịnh Hạ Long',
-			location: 'Quảng Ninh',
-			type: 'beach',
-			price: 1500000,
-			duration: 4,
-			rating: 5,
-			image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=600',
-			budget: { food: 300000, transport: 500000, accommodation: 700000 },
-		},
-		{
-			id: '2',
-			name: 'Fansipan',
-			location: 'Lào Cai',
-			type: 'mountain',
-			price: 850000,
-			duration: 5,
-			rating: 4.8,
-			image: 'https://images.unsplash.com/photo-1581432470775-68093f6c8d76?w=600',
-			budget: { food: 200000, transport: 400000, accommodation: 250000 },
-		},
-	]);
-
+const Planner: React.FC<PlannerProps> = ({ destinations }) => {
+	// State quản lý lịch trình người dùng chọn
 	const [schedule, setSchedule] = useState<PlanDay[]>([{ day: 1, date: moment().format('YYYY-MM-DD'), items: [] }]);
 	const [activeDayIndex, setActiveDayIndex] = useState<number>(0);
 	const [budgetLimit] = useState<number>(5000000);
 	const [filterType, setFilterType] = useState<string | null>(null);
 
+	// Thêm địa điểm vào ngày đang chọn
 	const handleAdd = (dest: Destination) => {
 		setSchedule((prev) =>
 			prev.map((d, idx) => {
@@ -86,7 +75,7 @@ const Planner: React.FC = () => {
 		message.success(`Đã thêm ${dest.name}`);
 	};
 
-	const handleDateChange = (date: Moment | null) => {
+	const handleDateChange = (date: any) => {
 		if (!date) return;
 		const newDateStr = date.format('YYYY-MM-DD');
 		setSchedule((prev) => prev.map((d, i) => (i === activeDayIndex ? { ...d, date: newDateStr } : d)));
@@ -106,23 +95,28 @@ const Planner: React.FC = () => {
 		setSchedule((prev) => prev.map((d, i) => (i === activeDayIndex ? { ...d, items: newItems } : d)));
 	};
 
+	// Tính toán thống kê dựa trên lịch trình hiện tại
 	const stats = useMemo(() => {
 		let totalBudget = 0;
 		let totalTime = 0;
 		schedule.forEach((d) =>
 			d.items.forEach((item) => {
 				totalBudget += item.price;
-				totalTime += item.duration;
+				totalTime += item.duration || 0;
 			}),
 		);
 		return { totalBudget, totalTime };
 	}, [schedule]);
 
+	// Lọc danh sách địa điểm từ props Admin gửi qua
 	const filteredData = useMemo(() => {
 		let data = [...destinations];
 		if (filterType) data = data.filter((d) => d.type === filterType);
 		return data;
 	}, [destinations, filterType]);
+
+	const { Title, Text } = Typography;
+	const { Option } = Select;
 
 	return (
 		<div style={{ padding: '30px 4%', backgroundColor: '#f4f7fe', minHeight: '100vh' }}>
@@ -135,22 +129,23 @@ const Planner: React.FC = () => {
 				<Col>
 					<Space size='large'>
 						<Statistic
-							title='Ngân sách'
+							title='Ngân sách dùng'
 							value={stats.totalBudget}
 							suffix='đ'
 							valueStyle={{ color: stats.totalBudget > budgetLimit ? '#f5222d' : '#52c41a' }}
 						/>
-						<Statistic title='Tham quan' value={stats.totalTime} suffix='h' />
+						<Statistic title='Thời gian' value={stats.totalTime} suffix='h' />
 					</Space>
 				</Col>
 			</Row>
 
 			<Row gutter={[24, 24]}>
+				{/* CỘT TRÁI: DANH SÁCH ĐỊA ĐIỂM TỪ ADMIN */}
 				<Col xs={24} lg={9}>
 					<Card
 						title={
 							<b>
-								<EnvironmentOutlined /> Khám phá
+								<EnvironmentOutlined /> Khám phá điểm đến
 							</b>
 						}
 						bodyStyle={{ padding: '12px' }}
@@ -165,6 +160,7 @@ const Planner: React.FC = () => {
 					>
 						<List
 							dataSource={filteredData}
+							locale={{ emptyText: <Empty description='Admin chưa thêm địa điểm nào' /> }}
 							renderItem={(item) => (
 								<List.Item style={{ padding: '8px 0', border: 'none' }}>
 									<Card hoverable bodyStyle={{ padding: 12 }} style={{ width: '100%', borderRadius: 12 }}>
@@ -173,14 +169,14 @@ const Planner: React.FC = () => {
 												<img
 													src={item.image}
 													style={{ width: '100%', height: 70, objectFit: 'cover', borderRadius: 8 }}
-													alt=''
+													alt={item.name}
 												/>
 											</Col>
 											<Col span={12}>
 												<Text strong>{item.name}</Text>
 												<br />
 												<Text type='danger' strong>
-													{item.price.toLocaleString()}đ
+													{item.price?.toLocaleString()}đ
 												</Text>
 											</Col>
 											<Col span={4}>
@@ -194,6 +190,7 @@ const Planner: React.FC = () => {
 					</Card>
 				</Col>
 
+				{/* CỘT PHẢI: LỊCH TRÌNH CHI TIẾT */}
 				<Col xs={24} lg={15}>
 					<Card style={{ borderRadius: 12 }} bodyStyle={{ padding: '24px' }}>
 						<Text strong>Tiến độ chi tiêu</Text>
@@ -246,7 +243,7 @@ const Planner: React.FC = () => {
 
 						<List
 							dataSource={schedule[activeDayIndex].items}
-							locale={{ emptyText: <Empty description='Chưa có điểm đến' /> }}
+							locale={{ emptyText: <Empty description='Chưa có điểm đến trong ngày này' /> }}
 							renderItem={(item, index) => (
 								<Card size='small' style={{ marginBottom: 10, borderRadius: 10 }}>
 									<Row align='middle'>
@@ -257,7 +254,7 @@ const Planner: React.FC = () => {
 										</Col>
 										<Col flex='auto'>
 											<Text strong>{item.name}</Text>
-											<div style={{ fontSize: 12, color: '#999' }}>{item.price.toLocaleString()}đ</div>
+											<div style={{ fontSize: 12, color: '#999' }}>{item.price?.toLocaleString()}đ</div>
 										</Col>
 										<Col>
 											<Space>
@@ -276,7 +273,7 @@ const Planner: React.FC = () => {
 													onClick={() => moveItem(index, index + 1)}
 												/>
 												<Popconfirm
-													title='Xóa?'
+													title='Xóa khỏi ngày này?'
 													onConfirm={() => {
 														const newS = [...schedule];
 														newS[activeDayIndex].items.splice(index, 1);
