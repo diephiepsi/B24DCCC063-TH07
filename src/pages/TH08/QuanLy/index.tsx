@@ -16,6 +16,7 @@ import {
 	Avatar,
 	Row,
 	Col,
+	Statistic,
 } from 'antd';
 import {
 	PlusOutlined,
@@ -26,16 +27,34 @@ import {
 	GlobalOutlined,
 	RocketOutlined,
 	CheckCircleOutlined,
+	FileTextFilled,
+	FireFilled,
+	PieChartFilled,
 	FormOutlined,
+	ThunderboltFilled,
 } from '@ant-design/icons';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
+interface BaiViet {
+	id: string;
+	tieuDe: string;
+	slug: string;
+	tomTat: string;
+	noiDung: string;
+	tacGia: string;
+	ngayDang: string;
+	tags: string[];
+	luotXem: number;
+	trangThai: 'Published' | 'Draft';
+	anhDaiDien: string;
+}
+
 const PostManagement: React.FC = () => {
 	const [form] = Form.useForm();
-
-	const [baiViets, setBaiViets] = useState<any[]>(() => {
+	const [baiViets, setBaiViets] = useState<BaiViet[]>(() => {
 		const saved = localStorage.getItem('th08_posts');
 		return saved ? JSON.parse(saved) : [];
 	});
@@ -50,7 +69,7 @@ const PostManagement: React.FC = () => {
 		localStorage.setItem('th08_posts', JSON.stringify(baiViets));
 	}, [baiViets]);
 
-	const showModal = (record?: any) => {
+	const showModal = (record?: BaiViet) => {
 		if (record) {
 			setEditingId(record.id);
 			form.setFieldsValue(record);
@@ -65,24 +84,25 @@ const PostManagement: React.FC = () => {
 		if (editingId) {
 			const updatedData = baiViets.map((item) => (item.id === editingId ? { ...item, ...values } : item));
 			setBaiViets(updatedData);
-			message.success('Cập nhật thành công');
+			message.success('Cập nhật nội dung thành công!');
 		} else {
-			const newPost = {
+			const newPost: BaiViet = {
 				...values,
 				id: `bv-${Date.now()}`,
 				luotXem: 0,
-				ngayDang: new Date().toISOString().split('T')[0],
+				ngayDang: dayjs().format('YYYY-MM-DD'),
 				tacGia: 'Nguyễn Văn Điệp',
 			};
 			setBaiViets([newPost, ...baiViets]);
-			message.success('Đã thêm bài viết mới');
+			message.success('Xuất bản bài viết thành công!');
 		}
 		setIsModalVisible(false);
+		form.resetFields();
 	};
 
 	const handleDelete = (id: string) => {
 		setBaiViets(baiViets.filter((item) => item.id !== id));
-		message.error('Đã xóa dữ liệu');
+		message.error('Đã xóa bài viết');
 	};
 
 	const columns = [
@@ -90,21 +110,35 @@ const PostManagement: React.FC = () => {
 			title: 'BÀI VIẾT',
 			key: 'article',
 			width: '45%',
-			render: (record: any) => (
+			render: (record: BaiViet) => (
 				<Space size={16}>
 					<Avatar
 						shape='square'
-						size={64}
-						src={record.anhDaiDien}
-						style={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+						size={72}
+						src={record.anhDaiDien || 'https://via.placeholder.com/150'}
+						style={{ borderRadius: '14px', boxShadow: '0 8px 16px rgba(0,0,0,0.06)', border: '2px solid #fff' }}
 					/>
-					<div style={{ maxWidth: '350px' }}>
-						<Text strong style={{ fontSize: '15px', color: '#111827', display: 'block' }}>
+					<div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+						<Text strong style={{ fontSize: '16px', color: '#1e293b', letterSpacing: '-0.3px' }}>
 							{record.tieuDe}
 						</Text>
-						<Text type='secondary' style={{ fontSize: '12px' }}>
-							<GlobalOutlined /> /{record.slug}
+						<Text type='secondary' style={{ fontSize: '13px' }}>
+							<GlobalOutlined style={{ color: '#6366f1' }} /> /{record.slug}
 						</Text>
+						<div style={{ marginTop: '2px' }}>
+							<Tag
+								icon={<FileTextFilled />}
+								style={{
+									border: 'none',
+									background: '#f1f5f9',
+									color: '#64748b',
+									borderRadius: '4px',
+									fontSize: '11px',
+								}}
+							>
+								{record.ngayDang}
+							</Tag>
+						</div>
 					</div>
 				</Space>
 			),
@@ -117,7 +151,12 @@ const PostManagement: React.FC = () => {
 			render: (status: string) => (
 				<Tag
 					color={status === 'Published' ? 'success' : 'warning'}
-					style={{ borderRadius: '6px', fontWeight: 600, padding: '2px 10px' }}
+					style={{
+						borderRadius: '20px',
+						fontWeight: 700,
+						padding: '4px 14px',
+						fontSize: '11px',
+					}}
 				>
 					{status === 'Published' ? <CheckCircleOutlined /> : <FormOutlined />}{' '}
 					{status === 'Published' ? 'ĐÃ ĐĂNG' : 'BẢN NHÁP'}
@@ -129,49 +168,62 @@ const PostManagement: React.FC = () => {
 			dataIndex: 'tags',
 			key: 'tags',
 			render: (tags: string[]) => (
-				<div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+				<Space size={[0, 4]} wrap style={{ maxWidth: '200px' }}>
 					{tags?.map((tag) => (
-						<Tag key={tag} style={{ margin: 0, fontSize: '11px', background: '#f3f4f6', border: 'none' }}>
-							{tag}
+						<Tag
+							key={tag}
+							style={{ borderRadius: '6px', background: '#eef2ff', border: 'none', color: '#4f46e5', fontWeight: 500 }}
+						>
+							#{tag}
 						</Tag>
 					))}
+				</Space>
+			),
+		},
+		{
+			title: 'XU HƯỚNG',
+			dataIndex: 'luotXem',
+			key: 'luotXem',
+			sorter: (a: BaiViet, b: BaiViet) => a.luotXem - b.luotXem,
+			render: (val: number) => (
+				<div style={{ background: '#fff7ed', padding: '6px 12px', borderRadius: '10px', display: 'inline-block' }}>
+					<Statistic
+						value={val}
+						valueStyle={{ fontSize: '14px', color: '#ea580c', fontWeight: 800 }}
+						prefix={<FireFilled style={{ fontSize: '14px' }} />}
+					/>
 				</div>
 			),
 		},
 		{
-			title: 'LƯỢT XEM',
-			dataIndex: 'luotXem',
-			key: 'luotXem',
-			sorter: (a: any, b: any) => a.luotXem - b.luotXem,
-			render: (val: number) => (
-				<Text strong style={{ color: '#3b82f6' }}>
-					<EyeOutlined /> {val.toLocaleString()}
-				</Text>
-			),
-		},
-		{
-			title: 'THAO TÁC',
+			title: '',
 			key: 'action',
 			align: 'right' as const,
-			render: (record: any) => (
+			render: (record: BaiViet) => (
 				<Space>
 					<Tooltip title='Chỉnh sửa'>
 						<Button
-							type='primary'
+							type='text'
 							shape='circle'
-							icon={<EditOutlined />}
+							icon={<EditOutlined style={{ color: '#4f46e5', fontSize: '18px' }} />}
 							onClick={() => showModal(record)}
-							style={{ background: '#3b82f6' }}
+							style={{ background: '#f5f3ff' }}
 						/>
 					</Tooltip>
 					<Popconfirm
-						title='Xác nhận xóa bài viết này?'
+						title='Bạn có chắc chắn muốn xóa bài viết này không?'
 						onConfirm={() => handleDelete(record.id)}
 						okText='Xóa'
 						cancelText='Hủy'
-						okButtonProps={{ danger: true }}
+						okButtonProps={{ danger: true, style: { borderRadius: '8px' } }}
 					>
-						<Button type='primary' danger shape='circle' icon={<DeleteOutlined />} />
+						<Button
+							type='text'
+							danger
+							shape='circle'
+							icon={<DeleteOutlined style={{ fontSize: '18px' }} />}
+							style={{ background: '#fff1f2' }}
+						/>
 					</Popconfirm>
 				</Space>
 			),
@@ -185,127 +237,243 @@ const PostManagement: React.FC = () => {
 	});
 
 	return (
-		<div style={{ padding: '30px', background: '#f8fafc', minHeight: '100vh' }}>
-			<Card bordered={false} style={{ borderRadius: '20px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}>
-				<Row justify='space-between' align='middle' style={{ marginBottom: '30px' }}>
-					<Col>
-						<Title level={2} style={{ margin: 0, fontWeight: 800 }}>
-							Quản Lý Bài Viết
-						</Title>
-						<Text type='secondary'>Quản lý nội dung Blog của bạn tại đây</Text>
-					</Col>
-					<Col>
-						<Button
-							type='primary'
-							size='large'
-							icon={<PlusOutlined />}
-							onClick={() => showModal()}
-							style={{
-								borderRadius: '12px',
-								height: '50px',
-								fontWeight: 600,
-								background: '#10b981',
-								border: 'none',
-								boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
-							}}
-						>
-							THÊM BÀI VIẾT
-						</Button>
-					</Col>
-				</Row>
+		<div style={{ padding: '40px', background: '#f8fafc', minHeight: '100vh' }}>
+			<Row gutter={[24, 24]} style={{ marginBottom: '40px' }}>
+				<Col span={6}>
+					<Card bordered={false} style={{ borderRadius: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+						<Statistic
+							title={
+								<Text strong style={{ color: '#64748b' }}>
+									TỔNG BÀI VIẾT
+								</Text>
+							}
+							value={baiViets.length}
+							prefix={<FileTextFilled style={{ color: '#6366f1' }} />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card bordered={false} style={{ borderRadius: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+						<Statistic
+							title={
+								<Text strong style={{ color: '#64748b' }}>
+									ĐÃ XUẤT BẢN
+								</Text>
+							}
+							value={baiViets.filter((b) => b.trangThai === 'Published').length}
+							prefix={<ThunderboltFilled style={{ color: '#10b981' }} />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card bordered={false} style={{ borderRadius: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+						<Statistic
+							title={
+								<Text strong style={{ color: '#64748b' }}>
+									LƯỢT XEM
+								</Text>
+							}
+							value={baiViets.reduce((acc, cur) => acc + (cur.luotXem || 0), 0)}
+							prefix={<EyeOutlined style={{ color: '#f59e0b' }} />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card bordered={false} style={{ borderRadius: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+						<Statistic
+							title={
+								<Text strong style={{ color: '#64748b' }}>
+									CHỦ ĐỀ
+								</Text>
+							}
+							value={danhSachTags.length}
+							prefix={<PieChartFilled style={{ color: '#ec4899' }} />}
+						/>
+					</Card>
+				</Col>
+			</Row>
 
-				<Space style={{ marginBottom: '24px' }} size='middle'>
-					<Input
-						placeholder='Tìm theo tiêu đề...'
-						prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
-						style={{ width: 350, borderRadius: '10px' }}
+			<Card
+				bordered={false}
+				style={{ borderRadius: '32px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.08)' }}
+				bodyStyle={{ padding: '0' }}
+			>
+				<div
+					style={{
+						padding: '32px',
+						borderBottom: '1px solid #f1f5f9',
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+					}}
+				>
+					<Space size='large'>
+						<Input
+							placeholder='Tìm kiếm nội dung...'
+							prefix={<SearchOutlined style={{ color: '#94a3b8' }} />}
+							style={{ width: 400, borderRadius: '14px', background: '#f1f5f9', border: 'none', height: '48px' }}
+							size='large'
+							onChange={(e) => setSearchText(e.target.value)}
+							allowClear
+						/>
+						<Select
+							placeholder='Trạng thái'
+							style={{ width: 180 }}
+							size='large'
+							allowClear
+							onChange={(val) => setFilterStatus(val)}
+						>
+							<Select.Option value='Published'>Công khai</Select.Option>
+							<Select.Option value='Draft'>Bản nháp</Select.Option>
+						</Select>
+					</Space>
+					<Button
+						type='primary'
 						size='large'
-						onChange={(e) => setSearchText(e.target.value)}
-						allowClear
-					/>
-					<Select
-						placeholder='Lọc trạng thái'
-						style={{ width: 180 }}
-						size='large'
-						allowClear
-						onChange={(val) => setFilterStatus(val)}
+						icon={<PlusOutlined />}
+						onClick={() => showModal()}
+						style={{
+							borderRadius: '16px',
+							height: '52px',
+							fontWeight: 800,
+							background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+							border: 'none',
+							padding: '0 32px',
+							boxShadow: '0 10px 20px rgba(79, 70, 229, 0.3)',
+						}}
 					>
-						<Select.Option value='Published'>Đã đăng</Select.Option>
-						<Select.Option value='Draft'>Bản nháp</Select.Option>
-					</Select>
-				</Space>
+						VIẾT BÀI MỚI
+					</Button>
+				</div>
 
 				<Table
 					columns={columns}
 					dataSource={filteredData}
 					rowKey='id'
-					pagination={{ pageSize: 6 }}
-					style={{ background: '#fff' }}
+					pagination={{ pageSize: 6, style: { padding: '24px' } }}
 				/>
 			</Card>
 
 			<Modal
 				title={
-					<Title level={4} style={{ margin: 0 }}>
-						<RocketOutlined /> Soạn Thảo Nội Dung
-					</Title>
+					<div style={{ textAlign: 'center', padding: '10px 0' }}>
+						<div
+							style={{
+								background: '#f5f3ff',
+								width: '56px',
+								height: '56px',
+								borderRadius: '16px',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								margin: '0 auto 16px',
+							}}
+						>
+							<RocketOutlined style={{ fontSize: '28px', color: '#6366f1' }} />
+						</div>
+						<Title level={3} style={{ margin: 0, fontWeight: 800 }}>
+							{editingId ? 'Cập Nhật Nội Dung' : 'Soạn Thảo Bài Viết'}
+						</Title>
+					</div>
 				}
 				visible={isModalVisible}
 				onCancel={() => setIsModalVisible(false)}
 				onOk={() => form.submit()}
-				width={1000}
+				width={1100}
 				centered
 				okText='LƯU BÀI VIẾT'
 				cancelText='HỦY'
+				okButtonProps={{ style: { height: '48px', borderRadius: '12px', fontWeight: 700, padding: '0 32px' } }}
+				cancelButtonProps={{ style: { height: '48px', borderRadius: '12px' }, type: 'text' }}
 			>
-				<Form form={form} layout='vertical' style={{ marginTop: '20px' }}>
-					<Row gutter={24}>
-						<Col span={16}>
-							<Form.Item name='tieuDe' label={<b>Tiêu đề bài viết</b>} rules={[{ required: true }]}>
-								<Input placeholder='Tiêu đề hấp dẫn...' size='large' />
+				<Form form={form} layout='vertical' onFinish={handleSave} style={{ marginTop: '24px' }}>
+					<Row gutter={32}>
+						<Col span={15}>
+							<Form.Item
+								name='tieuDe'
+								label={<Text strong>TIÊU ĐỀ BÀI VIẾT</Text>}
+								rules={[{ required: true, message: 'Nhập tiêu đề!' }]}
+							>
+								<Input placeholder='Nhập tiêu đề thu hút...' size='large' style={{ borderRadius: '10px' }} />
 							</Form.Item>
-							<Form.Item name='tomTat' label={<b>Tóm tắt ngắn</b>} rules={[{ required: true }]}>
-								<TextArea rows={3} placeholder='Mô tả ngắn gọn...' />
+							<Form.Item
+								name='tomTat'
+								label={<Text strong>TÓM TẮT NGẮN</Text>}
+								rules={[{ required: true, message: 'Nhập tóm tắt!' }]}
+							>
+								<TextArea rows={3} placeholder='Mô tả nội dung bài viết...' style={{ borderRadius: '10px' }} />
 							</Form.Item>
-							<Form.Item name='noiDung' label={<b>Nội dung (Markdown)</b>} rules={[{ required: true }]}>
-								<TextArea rows={12} style={{ fontFamily: 'monospace', background: '#f9fafb' }} />
+							<Form.Item
+								name='noiDung'
+								label={<Text strong>NỘI DUNG (MARKDOWN)</Text>}
+								rules={[{ required: true, message: 'Nhập nội dung!' }]}
+							>
+								<TextArea
+									rows={15}
+									style={{ borderRadius: '10px', background: '#f8fafc', fontFamily: 'monospace', fontSize: '14px' }}
+								/>
 							</Form.Item>
 						</Col>
-						<Col span={8}>
-							<Form.Item name='trangThai' label={<b>Trạng thái</b>} initialValue='Published'>
-								<Select size='large'>
-									<Select.Option value='Published'>Công khai</Select.Option>
-									<Select.Option value='Draft'>Bản nháp</Select.Option>
-								</Select>
-							</Form.Item>
-							<Form.Item name='tags' label={<b>Thẻ (Tags)</b>}>
-								<Select mode='tags' placeholder='Gõ tag và Enter' size='large'>
-									{danhSachTags.map((t) => (
-										<Select.Option key={t} value={t}>
-											{t}
-										</Select.Option>
-									))}
-								</Select>
-							</Form.Item>
-							<Form.Item name='slug' label={<b>Slug URL</b>} rules={[{ required: true }]}>
-								<Input prefix='/' placeholder='duong-dan' />
-							</Form.Item>
-							<Form.Item name='anhDaiDien' label={<b>URL Ảnh đại diện</b>} rules={[{ required: true }]}>
-								<Input placeholder='https://...' />
-							</Form.Item>
-							<div style={{ marginTop: '16px', padding: '12px', background: '#f3f4f6', borderRadius: '12px' }}>
-								<Text type='secondary' style={{ fontSize: '11px', display: 'block', marginBottom: '8px' }}>
-									XEM TRƯỚC ẢNH
-								</Text>
-								<Form.Item shouldUpdate={(prev, curr) => prev.anhDaiDien !== curr.anhDaiDien} noStyle>
-									{({ getFieldValue }) => (
-										<img
-											src={getFieldValue('anhDaiDien') || 'https://via.placeholder.com/200x120?text=No+Image'}
-											alt='Preview'
-											style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
-										/>
-									)}
+						<Col span={9}>
+							<div
+								style={{ background: '#f8fafc', padding: '28px', borderRadius: '24px', border: '1px solid #e2e8f0' }}
+							>
+								<Form.Item name='trangThai' label={<Text strong>TRẠNG THÁI</Text>} initialValue='Published'>
+									<Select size='large' style={{ borderRadius: '10px' }}>
+										<Select.Option value='Published'>Công khai bài viết</Select.Option>
+										<Select.Option value='Draft'>Lưu bản nháp</Select.Option>
+									</Select>
 								</Form.Item>
+								<Form.Item name='tags' label={<Text strong>CHỦ ĐỀ (TAGS)</Text>}>
+									<Select mode='tags' placeholder='Chọn tag' size='large' style={{ borderRadius: '10px' }}>
+										{danhSachTags.map((t) => (
+											<Select.Option key={t} value={t}>
+												{t}
+											</Select.Option>
+										))}
+									</Select>
+								</Form.Item>
+								<Form.Item name='slug' label={<Text strong>ĐƯỜNG DẪN (SLUG)</Text>} rules={[{ required: true }]}>
+									<Input prefix={<GlobalOutlined />} placeholder='slug-bai-viet' style={{ borderRadius: '8px' }} />
+								</Form.Item>
+								<Form.Item name='anhDaiDien' label={<Text strong>URL ẢNH BÌA</Text>} rules={[{ required: true }]}>
+									<Input placeholder='Link ảnh từ Unsplash/Pexels...' style={{ borderRadius: '8px' }} />
+								</Form.Item>
+								<div style={{ marginTop: '24px', textAlign: 'center' }}>
+									<Text
+										type='secondary'
+										style={{ fontSize: '11px', display: 'block', marginBottom: '10px', fontWeight: 800 }}
+									>
+										XEM TRƯỚC ẢNH BÌA
+									</Text>
+									<Form.Item shouldUpdate={(prev, curr) => prev.anhDaiDien !== curr.anhDaiDien} noStyle>
+										{({ getFieldValue }) => (
+											<div
+												style={{
+													width: '100%',
+													height: '180px',
+													borderRadius: '16px',
+													overflow: 'hidden',
+													border: '2px dashed #cbd5e1',
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'center',
+													background: '#fff',
+												}}
+											>
+												{getFieldValue('anhDaiDien') ? (
+													<img
+														src={getFieldValue('anhDaiDien')}
+														alt='Preview'
+														style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+													/>
+												) : (
+													<Text type='secondary'>Chưa có ảnh</Text>
+												)}
+											</div>
+										)}
+									</Form.Item>
+								</div>
 							</div>
 						</Col>
 					</Row>
