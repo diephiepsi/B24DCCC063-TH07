@@ -1,5 +1,4 @@
-﻿import component from '@/locales/en-US/component';
-
+﻿
 export default [
 	{
 		path: '/user',
@@ -137,6 +136,17 @@ export default [
 		name: 'Bài thực hành 07',
 		icon: 'TeamOutlined',
 		component: './TH07/index',
+	},
+	{
+		path: '/th08',
+		name: 'Bài tập TH08 - Blog',
+		icon: 'read',
+		routes: [
+			{ path: '/th08/trang-chu', name: 'Trang chủ Blog', component: './TH08/TrangChu' },
+			{ path: '/th08/quan-ly', name: 'Quản lý bài viết', component: './TH08/QuanLy' },
+			{ path: '/th08/gioi-thieu', name: 'Giới thiệu', component: './TH08/GioiThieu' },
+			{ path: '/th08/chi-tiet/:id', component: './TH08/ChiTiet', hideInMenu: true },
+		],
 	},
 	
 	// {
