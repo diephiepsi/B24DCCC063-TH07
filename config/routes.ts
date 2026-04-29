@@ -139,13 +139,15 @@ export default [
 	},
 	{
 		path: '/th08',
-		name: 'Bài tập TH08 - Blog',
+		name: 'Bài tập TH08',
 		icon: 'read',
 		routes: [
-			{ path: '/th08/trang-chu', name: 'Trang chủ Blog', component: './TH08/TrangChu' },
+			{ path: '/th08/trang-chu', name: 'Trang chủ', component: './TH08/TrangChu' },
 			{ path: '/th08/quan-ly', name: 'Quản lý bài viết', component: './TH08/QuanLy' },
+			{ path: '/th08/quan-ly-the', name: 'Quản lý thẻ', component: './TH08/QuanLyThe' }, // THÊM DÒNG NÀY
 			{ path: '/th08/gioi-thieu', name: 'Giới thiệu', component: './TH08/GioiThieu' },
-			{ path: '/th08/chi-tiet/:id', component: './TH08/ChiTiet', hideInMenu: true },
+			// Trang chi tiết vẫn để ẩn để link từ Trang chủ sang
+			{ path: '/th08/chi-tiet/:id', component: './TH08/ChiTiet', hideInMenu: true }, 
 		],
 	},
 	
