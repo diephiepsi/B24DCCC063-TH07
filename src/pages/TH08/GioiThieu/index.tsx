@@ -13,7 +13,7 @@ const NHOM_PHAT_TRIEN = [
     kyNang: ['React', 'UmiJS', 'Ant Design'],
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Diep',
     github: 'https://github.com/diephiepsi',
-    facebook: '#', // Điền link FB vào đây
+    facebook: 'https://www.facebook.com/iepnguyen.980727?locale=vi_VN', 
     email: 'mailto:your-email@gmail.com', // Điền email vào đây
   },
   {
@@ -23,7 +23,7 @@ const NHOM_PHAT_TRIEN = [
     kyNang: ['HTML/CSS', 'Javascript', 'UI/UX'],
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mai',
     github: 'https://github.com/mailt-B24DCCC189',
-    facebook: '#',
+    facebook: 'https://www.facebook.com/letrmai.23',
     email: 'mailto:email-của-mai@gmail.com',
   },
   {
@@ -33,7 +33,7 @@ const NHOM_PHAT_TRIEN = [
     kyNang: ['Node.js', 'MySQL', 'API Design'],
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tuyen',
     github: 'https://github.com/htuyn',
-    facebook: '#',
+    facebook: 'https://www.facebook.com/hongtuyen.vuong.7',
     email: 'mailto:email-của-tuyển@gmail.com',
   },
   {
@@ -43,7 +43,7 @@ const NHOM_PHAT_TRIEN = [
     kyNang: ['Markdown', 'Quality Control', 'Data'],
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Thang',
     github: 'https://github.com/B24DCCC242-buivanthang',
-    facebook: '#',
+    facebook: 'https://www.facebook.com/buivanthang',
     email: 'mailto:email-của-thắng@gmail.com',
   }
 ];
